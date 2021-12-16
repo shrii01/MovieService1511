@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="GetAllMovieDetails" doc:id="4f61132c-ce3a-4e24-be74-f644ea9b92bd" >
+		<db:select doc:name="GetAllMovies" doc:id="cdeed97f-9af4-42d4-bce9-d116a2e0326d" config-ref="Database_Config">
+			<db:sql ><![CDATA[Select * from Training]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="486e2d45-e881-4aea-842c-cb3c7e6952b3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+
+if(isEmpty(payload))
+{
+	message:"No movies to display"
+}
+else
+payload map{
+	title:$.Title,
+	format:$.format,
+	runtime:$.runtime,
+	releaseMonth:$.ReleaseMonth,
+	releaseDay:$.ReleaseDay,
+	releaseYear:$.ReleaseYear
+}distinctBy $.title]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="GetShowDetails" doc:id="80db198c-6d54-4134-a1bf-20af569e847a" >
+		<choice doc:name="Copy_of_Choice" doc:id="9a5e10a6-07ba-43e7-be7c-f92bb9602450" >
+			<when expression="#[attributes.queryParams.city !=null and attributes.queryParams.format !=null and attributes.queryParams.title  !=null]" >
+				<db:select doc:name="Select" doc:id="9042d040-140f-48bb-9b77-b5a789fe61fd" config-ref="Database_Config">
+					<db:sql ><![CDATA[select * from Training where Title=:title and City=:city and Format=:format]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+title: attributes.queryParams.title,
+city: attributes.queryParams.city,
+format:attributes.queryParams.format
+}]]]></db:input-parameters>
+				</db:select>
+			</when>
+			<when expression="#[attributes.queryParams.city !=null and attributes.queryParams.format !=null]" >
+				<db:select doc:name="Select" doc:id="fa149c11-4ea3-491e-9e54-3dba39c30d5c" config-ref="Database_Config">
+					<db:sql ><![CDATA[select * from Training where City=:city and Format=:format]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+city: attributes.queryParams.city,
+format: attributes.queryParams.format
+}]]]></db:input-parameters>
+				</db:select>
+			</when>
+			<when expression="#[attributes.queryParams.city !=null and attributes.queryParams.title !=null]" >
+				<db:select doc:name="Select" doc:id="bf7b66dc-a61e-4009-8799-134d9a1710a0" config-ref="Database_Config">
+					<db:sql ><![CDATA[select * from Training where Title=:title and City=:city]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+title: attributes.queryParams.title,
+city: attributes.queryParams.city
+}]]]></db:input-parameters>
+				</db:select>
+			</when>
+			<otherwise >
+				<db:select doc:name="Select" doc:id="c24e4e8b-4b39-4240-b087-44e258041c50" config-ref="Database_Config">
+					<db:sql ><![CDATA[select * from Training where City=:city]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	city: attributes.queryParams.city
+}]]]></db:input-parameters>
+				</db:select>
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Transform Message" doc:id="e82288e7-45e0-4732-b3e1-5a3d581e7b60">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map{
+	title:$.Title,
+	id:$.MovieId,
+	format:$.Format,
+	runtime:$.Runtime,
+	show_timing:$.Schedule,
+	city:$.City,
+    ticketprice:$.TicketPrice,
+	available_tickets:$.AvailableTickets,
+	releaseMonth:$.ReleaseMonth,
+	releaseDay:$.ReleaseDay,
+	releaseYear:$.ReleaseYear
+	}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

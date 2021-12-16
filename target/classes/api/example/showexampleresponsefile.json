@@ -1,0 +1,13 @@
+[{
+    "id": "123",
+    "title": "Assasins Creed",
+    "city": "Gulbarga",
+    "runtime": 115,
+    "format": "IMAX",
+    "plot": "Lorem ipsum dolor sit amet",
+    "releaseYear": 2017,
+    "releaseMonth": 1,
+    "releaseDay": 6,
+    "show_timing": "11:30 to 2:00",
+    "available_tickets": 80
+}]

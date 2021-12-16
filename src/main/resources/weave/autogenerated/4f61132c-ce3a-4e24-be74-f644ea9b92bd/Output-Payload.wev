@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_4f61132c_ce3a_4e24_be74_f644ea9b92bd_Output_Payload = {| message: String |} | Array<{|  title: String,   format: Null,   runtime: Null,   releaseMonth: Number | Null,   releaseDay: Number | Null,   releaseYear: Number | Null|}>
+

@@ -1,0 +1,66 @@
+#%RAML 1.0
+title: Movie
+
+traits:
+  client-id-required:
+    headers:
+      client_id:
+        type: string
+        description: client Id provided by API Manager
+        required: true
+      client_secret:
+        type: string
+        required: true
+        description: The Client secret key provided by the API Manager
+    responses:
+      401:
+        description: Unauthorized or invalid client application credentials
+      500:
+        description: Bad response from authorization server
+
+types:
+  movie: !include datatypes/movie-dataType.raml
+  show: !include datatypes/Show-dataType.raml
+/movies:
+  /shows:
+    get:
+      is: 
+        - client-id-required
+      queryParameters:
+        title:
+          displayName: title
+          type: string
+          description: Movies full name
+          example: ABCD
+          required: false
+        format:
+          displayName: format
+          type: string
+          description: Movies format
+          example: 3d
+          required: false
+        city:
+          displayName: city
+          type: string
+          description: city name
+          example: Gulbarga
+          required: true
+      responses:
+        "200":
+          body:
+            application/json:
+              type: show
+              example: !include example/showexampleresponsefile.json
+                                                             
+                              
+  /displayofmovies:
+    get:
+      is: 
+          - client-id-required  
+          
+      responses:
+        200:
+          body:
+            application/json:
+              type: movie
+              example: !include example/movieResponsefile.json

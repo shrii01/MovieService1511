@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_80db198c_6d54_4134_a1bf_20af569e847a_Output_Payload = Array<{|  title: String,   id: Number,   format: String,   runtime: Number | Null,   show_timing: String,   city: String,   ticketprice: Number,   available_tickets: Number,   releaseMonth: Number | Null,   releaseDay: Number | Null,   releaseYear: Number | Null|}>
+
